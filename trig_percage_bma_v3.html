@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trigonométrie — Perçage incliné | BMA Armurerie</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B2A4A;--steel:#2E5B8A;--rouge:#B14030;--vert:#0F6E56;
+  --amber:#A06A10;--lgray:#F4F3EF;--mgray:#C8C6BE;--dgray:#6E6C64;
+  --border:#DDD9CF;--white:#FFFFFF;--bg:#EDECEA;
+}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--navy);min-height:100vh;font-size:15px;line-height:1.5}
+
+/* HEADER */
+#hdr{background:var(--navy);color:#fff;padding:0 22px;height:50px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+#hdr h1{font-size:.95rem;font-weight:600}
+#hdr .sub{font-size:.68rem;color:var(--mgray);margin-top:1px}
+#hdr .hl{display:flex;flex-direction:column}
+#btn-pdf{background:var(--rouge);color:#fff;border:none;border-radius:7px;padding:6px 15px;font-size:.8rem;font-weight:600;cursor:pointer}
+#btn-pdf:hover{background:#9A3828}
+
+/* LAYOUT */
+#lay{display:flex;max-width:1020px;margin:0 auto;padding:18px 12px;gap:16px}
+
+/* SIDEBAR */
+#sb{width:172px;flex-shrink:0;display:flex;flex-direction:column;gap:4px}
+.sbl{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--dgray);padding:0 3px;margin-bottom:2px}
+.nb{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:8px 10px;cursor:pointer;text-align:left;transition:border-color .15s,background .15s;position:relative}
+.nb:hover:not(.locked){border-color:var(--steel)}
+.nb.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.nb.locked{opacity:.38;cursor:not-allowed}
+.nb .nn{font-size:1.25rem;font-weight:700;line-height:1;color:var(--steel);display:block}
+.nb.active .nn{color:rgba(255,255,255,.45)}
+.nb .nl{font-size:.7rem;font-weight:500;display:block;margin-top:1px}
+.nb .nok{font-size:.62rem;color:var(--vert);margin-top:2px;display:block}
+.nb.active .nok{color:rgba(255,255,255,.65)}
+.lk{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:.75rem}
+.ssep{height:1px;background:var(--border);margin:3px 0}
+.ebox{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:3px}
+.ebox label{font-size:.6rem;text-transform:uppercase;letter-spacing:.07em;color:var(--dgray);display:block;margin-bottom:2px}
+.ebox input{width:100%;border:1px solid var(--border);border-radius:5px;padding:4px 7px;font-size:.78rem;color:var(--navy);background:var(--lgray);margin-bottom:6px}
+.ebox input:last-child{margin-bottom:0}
+.ebox input:focus{outline:2px solid var(--steel);border-color:transparent}
+
+/* CONTENT */
+#ct{flex:1;min-width:0}
+.pnl{display:none}
+.pnl.active{display:block;animation:fi .2s ease}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* SÉANCE HEADER */
+.sh{background:var(--navy);border-radius:9px;padding:14px 18px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start;color:#fff}
+.sn{font-size:2.6rem;font-weight:700;line-height:1;color:rgba(255,255,255,.2);flex-shrink:0}
+.si h2{font-size:1.1rem;font-weight:600}
+.si .so{font-size:.7rem;color:var(--mgray);margin-top:2px}
+.si .sd{display:inline-block;background:rgba(255,255,255,.1);border-radius:20px;padding:2px 9px;font-size:.68rem;margin-top:4px}
+
+/* CARTE */
+.card{background:var(--white);border:1px solid var(--border);border-radius:9px;padding:16px 18px;margin-bottom:11px}
+.ct{font-size:.88rem;font-weight:700;color:var(--navy);margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--border)}
+p.tx{font-size:.86rem;line-height:1.65;color:#2a2a2a;margin-bottom:7px}
+
+/* ENCART */
+.enc{border-left:3px solid var(--steel);background:#EEF3FA;border-radius:0 7px 7px 0;padding:8px 12px;margin:8px 0;font-size:.83rem;line-height:1.6}
+.enc.rouge{border-color:var(--rouge);background:#FAF0EE}
+.enc.vert{border-color:var(--vert);background:#EEF7F3}
+.enc.amb{border-color:var(--amber);background:#FAF5EE}
+.enc code{background:rgba(0,0,0,.06);border-radius:3px;padding:1px 5px;font-size:.84em}
+
+/* FIGURE */
+.fw{background:var(--lgray);border:1px solid var(--border);border-radius:8px;padding:10px 8px 5px;margin:10px 0;text-align:center}
+.fc{font-size:.66rem;color:var(--dgray);margin-top:5px;letter-spacing:.03em}
+
+/* TABLEAU */
+table.dt{width:100%;border-collapse:collapse;font-size:.82rem;margin:7px 0}
+table.dt th{background:var(--navy);color:#fff;padding:5px 8px;text-align:left;font-weight:600;font-size:.72rem}
+table.dt td{padding:5px 8px;border-bottom:1px solid var(--border)}
+table.dt tr:nth-child(even) td{background:var(--lgray)}
+table.dt td:first-child{font-weight:700;color:var(--steel)}
+
+/* QUESTION */
+.qb{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:9px;transition:border-color .2s}
+.qb.ok{border-color:var(--vert)}
+.qb.err{border-color:var(--rouge)}
+.qh{background:var(--lgray);padding:8px 11px;display:flex;gap:8px;align-items:flex-start}
+.qc{font-family:monospace;font-size:.66rem;font-weight:700;color:var(--steel);background:#fff;border:1px solid var(--border);border-radius:4px;padding:2px 6px;flex-shrink:0;margin-top:1px;white-space:nowrap}
+.qt{font-size:.85rem;line-height:1.5;flex:1}
+.qp{font-size:.63rem;color:var(--dgray);flex-shrink:0;white-space:nowrap;margin-top:2px}
+.qbd{padding:10px 11px;background:#fff}
+
+/* INPUT NUMÉRIQUE */
+.ir{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ir label{font-size:.76rem;color:var(--dgray);font-family:monospace;white-space:nowrap}
+.ni{border:1.5px solid var(--border);border-radius:6px;padding:7px 11px;font-family:monospace;font-size:.95rem;width:115px;color:var(--navy);background:var(--lgray);transition:border-color .18s}
+.ni:focus{outline:none;border-color:var(--steel);background:#fff}
+.ni.ok{border-color:var(--vert);background:#EEF7F3;color:var(--vert)}
+.ni.err{border-color:var(--rouge);background:#FAF0EE}
+.un{font-family:monospace;font-size:.75rem;color:var(--dgray)}
+
+/* FEEDBACK */
+.fb{display:none;margin-top:6px;padding:6px 10px;border-radius:6px;font-size:.79rem;align-items:center;gap:6px}
+.fb.show{display:flex}
+.fb.ok{background:#EEF7F3;color:var(--vert);border:1px solid #B0DFC8}
+.fb.err{background:#FAF0EE;color:var(--rouge);border:1px solid #F0C4B8}
+
+/* BOUTON VALIDER */
+.bv{background:var(--steel);color:#fff;border:none;border-radius:7px;padding:8px 20px;font-size:.82rem;font-weight:600;cursor:pointer;margin-top:10px;transition:background .15s}
+.bv:hover{background:var(--navy)}
+
+/* BANDEAU DÉBLOCAGE */
+.ul{display:none;background:var(--vert);color:#fff;border-radius:8px;padding:11px 15px;margin-top:11px;align-items:center;gap:11px;animation:fi .35s ease}
+.ul.show{display:flex}
+.ul .ui{font-size:1.3rem;flex-shrink:0}
+.ul .ut{font-size:.83rem}
+.ul .ut strong{display:block;margin-bottom:1px}
+.bn{background:#fff;color:var(--vert);border:none;border-radius:6px;padding:6px 13px;font-size:.78rem;font-weight:600;cursor:pointer;margin-left:auto;flex-shrink:0}
+.bn:hover{background:#e0f5ec}
+
+/* BARRE PROGRESSION */
+.pw{background:var(--lgray);border:1px solid var(--border);border-radius:20px;height:5px;margin-bottom:12px;overflow:hidden}
+.pf{height:100%;background:var(--vert);border-radius:20px;transition:width .4s ease;width:0%}
+
+/* FICHE RÉGLAGE */
+.fiche{display:none;border:2px solid var(--vert);border-radius:9px;padding:14px 16px;margin-top:12px}
+.fiche.show{display:block}
+.fiche h3{color:var(--vert);font-size:.92rem;margin-bottom:10px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.fi{background:var(--lgray);border:1px solid var(--border);border-radius:7px;padding:8px 10px}
+.fi .fl{font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;color:var(--dgray);margin-bottom:2px}
+.fi .fv{font-family:monospace;font-size:1rem;font-weight:700;color:var(--vert)}
+
+/* PRINT */
+.pb{display:none}
+@media print{
+  #hdr,#sb,.bv,.bn,.ul,.pw{display:none!important}
+  body{background:#fff;font-size:11pt}
+  #lay{display:block;padding:0;max-width:none}
+  #ct{width:100%}
+  .pnl{display:block!important;page-break-after:always}
+  .pnl:last-of-type{page-break-after:avoid}
+  .card{box-shadow:none;border:1px solid #ccc;page-break-inside:avoid}
+  .sh{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ni{border:1px solid #999;background:#fff}
+  .ni.ok{color:#0F6E56}
+  .pb{display:block}
+  .ph{text-align:center;border-bottom:2px solid #1B2A4A;padding-bottom:9px;margin-bottom:14px}
+  .ph h1{font-size:15pt;color:#1B2A4A}
+  .ph .pm{font-size:9pt;color:#666;margin-top:2px}
+  .pf2{border:2px solid #B14030;border-radius:7px;padding:12px;margin-top:14px;page-break-inside:avoid}
+  .pf2 h2{color:#B14030;font-size:12pt;margin-bottom:9px}
+  .pr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #eee;font-size:10pt}
+  .pr span:last-child{font-weight:700;color:#0F6E56;font-family:monospace}
+  .sg{display:flex;gap:14px;margin-top:16px}
+  .sb2{flex:1;border:1px solid #ccc;border-radius:5px;padding:8px;min-height:52px}
+  .sb2 .sl{font-size:8pt;color:#666}
+}
+</style>
+</head>
+<body>
+
+<header id="hdr">
+  <div class="hl">
+    <h1>Perçage incliné — Goupille élastique</h1>
+    <span class="sub">BMA Armurerie · Trigonométrie appliquée · 5 séances</span>
+  </div>
+  <button id="btn-pdf" onclick="lancerPDF()">⬇ Exporter PDF</button>
+</header>
+
+<div id="lay">
+
+  <!-- SIDEBAR -->
+  <aside id="sb">
+    <div class="sbl">Séances</div>
+    <button class="nb active" id="nav1" onclick="aller(1)">
+      <span class="nn">1</span><span class="nl">Lecture de plan</span><span class="nok" id="ok1"></span>
+    </button>
+    <button class="nb locked" id="nav2" onclick="aller(2)">
+      <span class="nn">2</span><span class="nl">Angle α (arctan)</span><span class="nok" id="ok2"></span>
+      <span class="lk" id="lk2">🔒</span>
+    </button>
+    <button class="nb locked" id="nav3" onclick="aller(3)">
+      <span class="nn">3</span><span class="nl">Longueur réelle L</span><span class="nok" id="ok3"></span>
+      <span class="lk" id="lk3">🔒</span>
+    </button>
+    <button class="nb locked" id="nav4" onclick="aller(4)">
+      <span class="nn">4</span><span class="nl">Pente de perçage</span><span class="nok" id="ok4"></span>
+      <span class="lk" id="lk4">🔒</span>
+    </button>
+    <button class="nb locked" id="nav5" onclick="aller(5)">
+      <span class="nn">5</span><span class="nl">Cote de fond</span><span class="nok" id="ok5"></span>
+      <span class="lk" id="lk5">🔒</span>
+    </button>
+    <div class="ssep"></div>
+    <div class="ebox">
+      <label>Nom &amp; Prénom</label>
+      <input type="text" id="e-nom" placeholder="DUPONT Martin">
+      <label>Classe</label>
+      <input type="text" id="e-cl" placeholder="BMA1">
+    </div>
+  </aside>
+
+  <main id="ct">
+
+    <!-- ══════════════════════════
+         SÉANCE 1
+    ══════════════════════════ -->
+    <div class="pnl active" id="p1">
+      <div class="sh">
+        <div class="sn">1</div>
+        <div class="si">
+          <h2>Mise en situation et lecture de plan</h2>
+          <div class="so">Lire le schéma · Relever les données · Répondre par des valeurs numériques</div>
+          <div class="sd">⏱ 55 min</div>
+        </div>
+      </div>
+      <div class="pw"><div class="pf" id="prog1"></div></div>
+
+      <div class="card">
+        <div class="ct">Contexte et données</div>
+        <p class="tx">Révision d'un mécanisme de percussion : percer un logement incliné pour une goupille élastique de maintien. Tous les paramètres doivent être calculés avant toute mise en machine.</p>
+        <table class="dt">
+          <tr><th>Symbole</th><th>Valeur</th><th>Signification</th></tr>
+          <tr><td>h</td><td>42 mm</td><td>Hauteur du bloc — côté vertical</td></tr>
+          <tr><td>d</td><td>18 mm</td><td>Déport horizontal du trou</td></tr>
+          <tr><td>∅</td><td>6 mm</td><td>Diamètre de la goupille élastique</td></tr>
+          <tr><td>P</td><td>7 mm</td><td>Cote de fond le long de l'axe</td></tr>
+          <tr><td>Matière</td><td>42CrMo4</td><td>Acier de décolletage</td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="ct">Schéma du bloc à usiner</div>
+        <div class="fw">
+          <svg width="100%" viewBox="0 0 500 270" xmlns="http://www.w3.org/2000/svg">
+            <rect x="130" y="25" width="155" height="195" rx="3" fill="#EEEEE8" stroke="#444" stroke-width="1.8"/>
+            <line x1="130" y1="25" x2="285" y2="25" stroke="#1B2A4A" stroke-width="2.5"/>
+            <line x1="130" y1="220" x2="285" y2="220" stroke="#1B2A4A" stroke-width="2.5"/>
+            <line x1="130" y1="65" x2="170" y2="25" stroke="#D0CFC8" stroke-width="0.6"/>
+            <line x1="130" y1="105" x2="210" y2="25" stroke="#D0CFC8" stroke-width="0.6"/>
+            <line x1="130" y1="145" x2="250" y2="25" stroke="#D0CFC8" stroke-width="0.6"/>
+            <line x1="130" y1="185" x2="285" y2="30" stroke="#D0CFC8" stroke-width="0.6"/>
+            <line x1="130" y1="220" x2="285" y2="65" stroke="#D0CFC8" stroke-width="0.6"/>
+            <line x1="150" y1="220" x2="285" y2="85" stroke="#D0CFC8" stroke-width="0.6"/>
+            <line x1="190" y1="220" x2="285" y2="125" stroke="#D0CFC8" stroke-width="0.6"/>
+            <line x1="230" y1="220" x2="285" y2="165" stroke="#D0CFC8" stroke-width="0.6"/>
+            <line x1="270" y1="220" x2="285" y2="205" stroke="#D0CFC8" stroke-width="0.6"/>
+            <!-- Triangle rectangle tirets bleus -->
+            <line x1="163" y1="25" x2="163" y2="220" stroke="#2E5B8A" stroke-width="1" stroke-dasharray="5,3"/>
+            <line x1="163" y1="220" x2="233" y2="220" stroke="#2E5B8A" stroke-width="1" stroke-dasharray="5,3"/>
+            <rect x="163" y="209" width="11" height="11" fill="none" stroke="#2E5B8A" stroke-width="1"/>
+            <!-- Axe trou rouge -->
+            <line x1="163" y1="25" x2="233" y2="220" stroke="#B14030" stroke-width="1.8" stroke-dasharray="7,4"/>
+            <line x1="157" y1="25" x2="227" y2="220" stroke="#B14030" stroke-width="0.6"/>
+            <line x1="169" y1="25" x2="239" y2="220" stroke="#B14030" stroke-width="0.6"/>
+            <circle cx="163" cy="25" r="5.5" fill="#B14030"/>
+            <circle cx="233" cy="220" r="7" fill="#fff" stroke="#B14030" stroke-width="1.8"/>
+            <circle cx="233" cy="220" r="2.5" fill="#B14030"/>
+            <!-- Arc alpha -->
+            <path d="M163,52 Q171,49 172,59" fill="none" stroke="#2E5B8A" stroke-width="1.3"/>
+            <text x="177" y="70" font-size="13" font-style="italic" fill="#2E5B8A" font-family="Georgia,serif">α = ?</text>
+            <!-- Cote h -->
+            <line x1="108" y1="25" x2="128" y2="25" stroke="#888" stroke-width="0.7"/>
+            <line x1="108" y1="220" x2="128" y2="220" stroke="#888" stroke-width="0.7"/>
+            <line x1="111" y1="27" x2="111" y2="218" stroke="#888" stroke-width="0.9"/>
+            <polygon points="111,25 107.5,34 114.5,34" fill="#888"/>
+            <polygon points="111,220 107.5,211 114.5,211" fill="#888"/>
+            <text x="98" y="127" font-size="11" font-style="italic" fill="#555" font-family="Georgia,serif" text-anchor="middle">h</text>
+            <text x="86" y="140" font-size="9" fill="#777" font-family="monospace" text-anchor="middle">42 mm</text>
+            <!-- Cote d -->
+            <line x1="163" y1="237" x2="163" y2="252" stroke="#888" stroke-width="0.7"/>
+            <line x1="233" y1="237" x2="233" y2="252" stroke="#888" stroke-width="0.7"/>
+            <line x1="165" y1="244" x2="231" y2="244" stroke="#888" stroke-width="0.9"/>
+            <polygon points="163,244 172,240.5 172,247.5" fill="#888"/>
+            <polygon points="233,244 224,240.5 224,247.5" fill="#888"/>
+            <text x="198" y="262" font-size="9" fill="#777" font-family="monospace" text-anchor="middle">d = 18 mm</text>
+            <!-- Labels -->
+            <line x1="170" y1="25" x2="298" y2="15" stroke="#aaa" stroke-width="0.7" stroke-dasharray="3,2"/>
+            <text x="302" y="13" font-size="10" fill="#B14030" font-weight="700">Entrée du trou</text>
+            <text x="302" y="24" font-size="8" fill="#777" font-family="monospace">point de pénétration du foret</text>
+            <line x1="241" y1="218" x2="298" y2="207" stroke="#aaa" stroke-width="0.7" stroke-dasharray="3,2"/>
+            <text x="302" y="205" font-size="10" fill="#B14030" font-weight="700">Fond du trou</text>
+            <text x="302" y="216" font-size="8" fill="#777" font-family="monospace">logement goupille ∅6 mm</text>
+            <text x="302" y="122" font-size="10" fill="#B14030" font-style="italic">Axe de perçage</text>
+            <line x1="220" y1="120" x2="298" y2="120" stroke="#B14030" stroke-width="0.7" stroke-dasharray="3,2"/>
+            <text x="140" y="130" font-size="9" fill="#777">Acier 42CrMo4</text>
+          </svg>
+          <div class="fc">Figure 1 — Vue de coupe du bloc avec axe de perçage incliné</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Questions — Lecture de plan</div>
+
+        <div class="qb" id="qb1-1">
+          <div class="qh">
+            <span class="qc">Q1.1</span>
+            <span class="qt">Quelle est la hauteur du bloc h ?</span>
+            <span class="qp">1 pt</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>h =</label>
+              <input type="number" class="ni" id="n1-1" step="1" placeholder="0" oninput="chk('1-1',42,0.5)">
+              <span class="un">mm</span>
+            </div>
+            <div class="fb" id="fb1-1"></div>
+          </div>
+        </div>
+
+        <div class="qb" id="qb1-2">
+          <div class="qh">
+            <span class="qc">Q1.2</span>
+            <span class="qt">Quel est le déport horizontal d ?</span>
+            <span class="qp">1 pt</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>d =</label>
+              <input type="number" class="ni" id="n1-2" step="1" placeholder="0" oninput="chk('1-2',18,0.5)">
+              <span class="un">mm</span>
+            </div>
+            <div class="fb" id="fb1-2"></div>
+          </div>
+        </div>
+
+        <div class="qb" id="qb1-3">
+          <div class="qh">
+            <span class="qc">Q1.3</span>
+            <span class="qt">Quel diamètre de foret faut-il choisir pour loger la goupille ?</span>
+            <span class="qp">1 pt</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>∅ foret =</label>
+              <input type="number" class="ni" id="n1-3" step="1" placeholder="0" oninput="chk('1-3',6,0.5)">
+              <span class="un">mm</span>
+            </div>
+            <div class="fb" id="fb1-3"></div>
+          </div>
+        </div>
+
+        <div class="qb" id="qb1-4">
+          <div class="qh">
+            <span class="qc">Q1.4</span>
+            <span class="qt">Quelle est la cote de fond P mesurée le long de l'axe du trou ?</span>
+            <span class="qp">1 pt</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>P =</label>
+              <input type="number" class="ni" id="n1-4" step="1" placeholder="0" oninput="chk('1-4',7,0.5)">
+              <span class="un">mm</span>
+            </div>
+            <div class="fb" id="fb1-4"></div>
+          </div>
+        </div>
+
+        <button class="bv" onclick="valS(1)">Valider la séance 1</button>
+        <div class="ul" id="ul1">
+          <span class="ui">🔓</span>
+          <div class="ut"><strong>Séance 2 débloquée !</strong>Données relevées. Passez au calcul de α.</div>
+          <button class="bn" onclick="aller(2)">Séance 2 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════
+         SÉANCE 2
+    ══════════════════════════ -->
+    <div class="pnl" id="p2">
+      <div class="sh">
+        <div class="sn">2</div>
+        <div class="si">
+          <h2>Calcul de l'angle de perçage α</h2>
+          <div class="so">Rapport tan(α) = d/h · Fonction arctan · Résultat en degrés</div>
+          <div class="sd">⏱ 55 min</div>
+        </div>
+      </div>
+      <div class="pw"><div class="pf" id="prog2"></div></div>
+
+      <div class="card">
+        <div class="ct">Rappel — Tangente et arctan</div>
+        <div class="enc">
+          Dans un triangle rectangle :<br>
+          <strong>tan(α) = côté opposé / côté adjacent = d / h</strong><br><br>
+          Pour obtenir l'angle : <strong>α = arctan(d / h)</strong><br>
+          Sur la calculatrice : touche <code>tan⁻¹</code> ou <code>arctan</code> — résultat en degrés.
+        </div>
+        <div class="fw">
+          <svg width="100%" viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="55,175 55,20 220,175" fill="rgba(46,91,138,0.07)" stroke="#1B2A4A" stroke-width="1.8" stroke-linejoin="round"/>
+            <rect x="55" y="163" width="11" height="11" fill="none" stroke="#2E5B8A" stroke-width="1"/>
+            <path d="M55,48 Q67,45 68,57" fill="none" stroke="#2E5B8A" stroke-width="1.4"/>
+            <text x="72" y="65" font-size="14" font-style="italic" fill="#2E5B8A" font-family="Georgia,serif">α</text>
+            <text x="24" y="103" font-size="12" font-style="italic" fill="#1B2A4A" font-family="Georgia,serif" text-anchor="middle">h</text>
+            <text x="24" y="116" font-size="9" fill="#777" font-family="monospace" text-anchor="middle">42 mm</text>
+            <text x="24" y="127" font-size="8" fill="#2E5B8A" text-anchor="middle">(adjacent)</text>
+            <text x="137" y="193" font-size="12" font-style="italic" fill="#B14030" font-family="Georgia,serif" text-anchor="middle">d</text>
+            <text x="137" y="200" font-size="8" fill="#B14030" text-anchor="middle">18 mm (opposé)</text>
+            <text x="157" y="90" font-size="12" font-style="italic" fill="#0F6E56" font-family="Georgia,serif">L = ?</text>
+            <text x="157" y="102" font-size="8" fill="#777">(hypoténuse)</text>
+            <rect x="285" y="15" width="178" height="95" rx="6" fill="#EEF3FA" stroke="#2E5B8A" stroke-width="0.9"/>
+            <text x="297" y="33" font-size="9" fill="#2E5B8A" font-weight="700">FORMULE</text>
+            <text x="297" y="50" font-size="9" fill="#1B2A4A" font-family="monospace">tan(α) = d / h</text>
+            <text x="297" y="64" font-size="9" fill="#1B2A4A" font-family="monospace">tan(α) = 18 / 42</text>
+            <text x="297" y="78" font-size="9" fill="#1B2A4A" font-family="monospace">α = arctan(18/42)</text>
+            <text x="297" y="97" font-size="10" fill="#B14030" font-weight="700" font-family="monospace">α = ??? °</text>
+          </svg>
+          <div class="fc">Figure 2 — Triangle rectangle extrait du bloc</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Questions — Calcul de α</div>
+
+        <div class="qb" id="qb2-1">
+          <div class="qh">
+            <span class="qc">Q2.1</span>
+            <span class="qt">Calculer le rapport tan(α) = d / h = 18 / 42. Donner le résultat arrondi à 4 décimales.</span>
+            <span class="qp">2 pts</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>tan(α) =</label>
+              <input type="number" class="ni" id="n2-1" step="0.0001" placeholder="0.0000" oninput="chk('2-1',0.42857,0.0005)">
+              <span class="un">(sans unité)</span>
+            </div>
+            <div class="fb" id="fb2-1"></div>
+          </div>
+        </div>
+
+        <div class="qb" id="qb2-2">
+          <div class="qh">
+            <span class="qc">Q2.2</span>
+            <span class="qt">Calculer α = arctan(18 / 42) avec la calculatrice. Arrondir au centième de degré.</span>
+            <span class="qp">4 pts</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>α =</label>
+              <input type="number" class="ni" id="n2-2" step="0.01" placeholder="0.00" oninput="chk('2-2',23.199,0.06)">
+              <span class="un">°</span>
+            </div>
+            <div class="fb" id="fb2-2"></div>
+          </div>
+        </div>
+
+        <button class="bv" onclick="valS(2)">Valider la séance 2</button>
+        <div class="ul" id="ul2">
+          <span class="ui">🔓</span>
+          <div class="ut"><strong>Séance 3 débloquée !</strong>Angle α correct. Calculons la longueur réelle L.</div>
+          <button class="bn" onclick="aller(3)">Séance 3 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════
+         SÉANCE 3
+    ══════════════════════════ -->
+    <div class="pnl" id="p3">
+      <div class="sh">
+        <div class="sn">3</div>
+        <div class="si">
+          <h2>Longueur réelle du trou L</h2>
+          <div class="so">Pythagore : L = √(h²+d²) · Vérification : L = h / cos(α)</div>
+          <div class="sd">⏱ 55 min</div>
+        </div>
+      </div>
+      <div class="pw"><div class="pf" id="prog3"></div></div>
+
+      <div class="card">
+        <div class="ct">Rappel — Deux méthodes</div>
+        <div class="enc vert">
+          <strong>Méthode A (Pythagore) :</strong> L = √(h² + d²) = √(42² + 18²)<br>
+          <strong>Méthode B (Trigonométrie) :</strong> L = h / cos(α) = 42 / cos(α)<br>
+          Les deux méthodes doivent donner le même résultat.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Questions — Calcul de L</div>
+
+        <div class="qb" id="qb3-1">
+          <div class="qh">
+            <span class="qc">Q3.1</span>
+            <span class="qt">Calculer L² = h² + d² = 42² + 18²</span>
+            <span class="qp">2 pts</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>L² =</label>
+              <input type="number" class="ni" id="n3-1" step="1" placeholder="0" oninput="chk('3-1',2088,1)">
+              <span class="un">mm²</span>
+            </div>
+            <div class="fb" id="fb3-1"></div>
+          </div>
+        </div>
+
+        <div class="qb" id="qb3-2">
+          <div class="qh">
+            <span class="qc">Q3.2</span>
+            <span class="qt">En déduire L = √(L²). Arrondir au dixième de mm. <em>(Méthode A)</em></span>
+            <span class="qp">3 pts</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>L =</label>
+              <input type="number" class="ni" id="n3-2" step="0.1" placeholder="0.0" oninput="chk('3-2',45.695,0.15)">
+              <span class="un">mm</span>
+            </div>
+            <div class="fb" id="fb3-2"></div>
+          </div>
+        </div>
+
+        <div class="qb" id="qb3-3">
+          <div class="qh">
+            <span class="qc">Q3.3</span>
+            <span class="qt">Vérifier par la méthode B : L = h / cos(α) = 42 / cos(α). Utiliser α de la séance 2.</span>
+            <span class="qp">3 pts</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>L =</label>
+              <input type="number" class="ni" id="n3-3" step="0.1" placeholder="0.0" oninput="chk('3-3',45.695,0.2)">
+              <span class="un">mm</span>
+            </div>
+            <div class="fb" id="fb3-3"></div>
+          </div>
+        </div>
+
+        <div class="qb" id="qb3-4">
+          <div class="qh">
+            <span class="qc">Q3.4</span>
+            <span class="qt">Réglage machine : à quelle valeur doit-on régler la butée de profondeur de la perceuse ?</span>
+            <span class="qp">2 pts</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>Butée =</label>
+              <input type="number" class="ni" id="n3-4" step="0.1" placeholder="0.0" oninput="chk('3-4',45.695,0.2)">
+              <span class="un">mm</span>
+            </div>
+            <div class="fb" id="fb3-4"></div>
+          </div>
+        </div>
+
+        <button class="bv" onclick="valS(3)">Valider la séance 3</button>
+        <div class="ul" id="ul3">
+          <span class="ui">🔓</span>
+          <div class="ut"><strong>Séance 4 débloquée !</strong>L correct. Place à la pente de perçage.</div>
+          <button class="bn" onclick="aller(4)">Séance 4 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════
+         SÉANCE 4
+    ══════════════════════════ -->
+    <div class="pnl" id="p4">
+      <div class="sh">
+        <div class="sn">4</div>
+        <div class="si">
+          <h2>Pente de perçage</h2>
+          <div class="so">p (%) = (d / h) × 100 · Lien avec tan(α)</div>
+          <div class="sd">⏱ 55 min</div>
+        </div>
+      </div>
+      <div class="pw"><div class="pf" id="prog4"></div></div>
+
+      <div class="card">
+        <div class="ct">Rappel — Définition</div>
+        <div class="enc amb">
+          <strong>Pente (%) = (côté opposé / côté adjacent) × 100 = (d / h) × 100</strong><br>
+          La pente exprime le déport horizontal en mm pour 100 mm avancés verticalement.
+        </div>
+        <div class="fw">
+          <svg width="100%" viewBox="0 0 480 230" xmlns="http://www.w3.org/2000/svg">
+            <rect x="105" y="20" width="155" height="185" rx="3" fill="#EEEEE8" stroke="#444" stroke-width="1.8"/>
+            <line x1="105" y1="20" x2="260" y2="20" stroke="#1B2A4A" stroke-width="2.5"/>
+            <line x1="105" y1="205" x2="260" y2="205" stroke="#1B2A4A" stroke-width="2.5"/>
+            <line x1="138" y1="20" x2="138" y2="205" stroke="#2E5B8A" stroke-width="0.9" stroke-dasharray="5,3"/>
+            <line x1="138" y1="205" x2="208" y2="205" stroke="#2E5B8A" stroke-width="0.9" stroke-dasharray="5,3"/>
+            <line x1="138" y1="20" x2="208" y2="205" stroke="#B14030" stroke-width="1.8" stroke-dasharray="7,4"/>
+            <circle cx="138" cy="20" r="5.5" fill="#B14030"/>
+            <circle cx="208" cy="205" r="6.5" fill="#fff" stroke="#B14030" stroke-width="1.8"/>
+            <!-- Visualisation pente -->
+            <line x1="138" y1="50" x2="300" y2="50" stroke="#A06A10" stroke-width="1.1" stroke-dasharray="5,3"/>
+            <line x1="138" y1="20" x2="138" y2="50" stroke="#A06A10" stroke-width="1.5"/>
+            <line x1="138" y1="50" x2="153" y2="50" stroke="#A06A10" stroke-width="2"/>
+            <polygon points="153,50 145,46.5 145,53.5" fill="#A06A10"/>
+            <text x="305" y="45" font-size="9" fill="#A06A10">Pour h = 30 mm vertical,</text>
+            <text x="305" y="57" font-size="9" fill="#A06A10">déport = 12,9 mm (≈ 43%)</text>
+            <text x="86" y="115" font-size="11" font-style="italic" fill="#555" font-family="Georgia,serif" text-anchor="middle">h = 42</text>
+            <text x="173" y="221" font-size="9" fill="#B14030" font-family="monospace" text-anchor="middle">d = 18</text>
+          </svg>
+          <div class="fc">Figure 3 — Visualisation de la pente de perçage</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Questions — Pente</div>
+
+        <div class="qb" id="qb4-1">
+          <div class="qh">
+            <span class="qc">Q4.1</span>
+            <span class="qt">Calculer la pente : p = (d / h) × 100 = (18 / 42) × 100. Arrondir au centième.</span>
+            <span class="qp">3 pts</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>p =</label>
+              <input type="number" class="ni" id="n4-1" step="0.01" placeholder="0.00" oninput="chk('4-1',42.857,0.25)">
+              <span class="un">%</span>
+            </div>
+            <div class="fb" id="fb4-1"></div>
+          </div>
+        </div>
+
+        <div class="qb" id="qb4-2">
+          <div class="qh">
+            <span class="qc">Q4.2</span>
+            <span class="qt">Pour chaque millimètre avancé verticalement, de combien le foret se décale-t-il latéralement ? (p / 100 = ?)</span>
+            <span class="qp">2 pts</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>Déport pour 1 mm =</label>
+              <input type="number" class="ni" id="n4-2" step="0.001" placeholder="0.000" oninput="chk('4-2',0.42857,0.003)">
+              <span class="un">mm</span>
+            </div>
+            <div class="fb" id="fb4-2"></div>
+          </div>
+        </div>
+
+        <div class="qb" id="qb4-3">
+          <div class="qh">
+            <span class="qc">Q4.3</span>
+            <span class="qt">Vérifier que tan(α) = p / 100. Calculer p / 100 et comparer à tan(α) de la séance 2.</span>
+            <span class="qp">3 pts</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>p / 100 =</label>
+              <input type="number" class="ni" id="n4-3" step="0.0001" placeholder="0.0000" oninput="chk('4-3',0.42857,0.001)">
+              <span class="un">(= tan α ?)</span>
+            </div>
+            <div class="fb" id="fb4-3"></div>
+          </div>
+        </div>
+
+        <button class="bv" onclick="valS(4)">Valider la séance 4</button>
+        <div class="ul" id="ul4">
+          <span class="ui">🔓</span>
+          <div class="ut"><strong>Séance 5 débloquée !</strong>Dernière étape : vérification de la cote de fond.</div>
+          <button class="bn" onclick="aller(5)">Séance 5 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════
+         SÉANCE 5
+    ══════════════════════════ -->
+    <div class="pnl" id="p5">
+      <div class="sh">
+        <div class="sn">5</div>
+        <div class="si">
+          <h2>Vérification de la cote de fond P</h2>
+          <div class="so">h_fond = P × cos(α) · d_fond = P × sin(α) · Cohérence avec le bloc</div>
+          <div class="sd">⏱ 55 min</div>
+        </div>
+      </div>
+      <div class="pw"><div class="pf" id="prog5"></div></div>
+
+      <div class="card">
+        <div class="ct">Rappel — Décomposition de P</div>
+        <div class="enc rouge">
+          P = 7 mm est mesurée <strong>le long de l'axe incliné</strong>.<br>
+          Composante verticale   : <strong>h_fond = P × cos(α)</strong><br>
+          Composante horizontale : <strong>d_fond = P × sin(α)</strong><br><br>
+          Si h_fond &lt; 42 mm et d_fond &lt; 18 mm → goupille dans le bloc → cote cohérente.
+        </div>
+        <div class="fw">
+          <svg width="100%" viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg">
+            <rect x="110" y="20" width="155" height="190" rx="3" fill="#EEEEE8" stroke="#444" stroke-width="1.8"/>
+            <line x1="110" y1="20" x2="265" y2="20" stroke="#1B2A4A" stroke-width="2.5"/>
+            <line x1="110" y1="210" x2="265" y2="210" stroke="#1B2A4A" stroke-width="2.5"/>
+            <line x1="143" y1="20" x2="143" y2="210" stroke="#2E5B8A" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.5"/>
+            <line x1="143" y1="210" x2="213" y2="210" stroke="#2E5B8A" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.5"/>
+            <line x1="143" y1="20" x2="213" y2="210" stroke="#B14030" stroke-width="1" stroke-dasharray="5,4" opacity="0.3"/>
+            <circle cx="143" cy="20" r="5.5" fill="#B14030"/>
+            <circle cx="213" cy="210" r="6.5" fill="#fff" stroke="#B14030" stroke-width="1" opacity="0.4"/>
+            <!-- Segment P vert (ratio 7/45.7 ≈ 0.153) -->
+            <!-- pt P : x=143+(213-143)*0.153=153.7, y=20+(210-20)*0.153=49.1 -->
+            <line x1="143" y1="20" x2="154" y2="49" stroke="#0F6E56" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="154" cy="49" r="5" fill="#0F6E56"/>
+            <line x1="143" y1="20" x2="143" y2="49" stroke="#0F6E56" stroke-width="1.8" stroke-dasharray="4,2"/>
+            <line x1="143" y1="49" x2="154" y2="49" stroke="#0F6E56" stroke-width="1.8" stroke-dasharray="4,2"/>
+            <text x="157" y="37" font-size="11" fill="#0F6E56" font-weight="700">P = 7 mm</text>
+            <text x="115" y="39" font-size="9" fill="#0F6E56" font-family="monospace">h_fond</text>
+            <text x="140" y="62" font-size="9" fill="#0F6E56" font-family="monospace">d_fond</text>
+            <rect x="283" y="15" width="182" height="105" rx="6" fill="#EEF7F3" stroke="#0F6E56" stroke-width="0.9"/>
+            <text x="295" y="33" font-size="9" fill="#0F6E56" font-weight="700">DÉCOMPOSITION DE P</text>
+            <text x="295" y="50" font-size="9" fill="#1B2A4A" font-family="monospace">h_fond = P × cos(α)</text>
+            <text x="295" y="64" font-size="9" fill="#1B2A4A" font-family="monospace">       = 7 × cos(?)°</text>
+            <text x="295" y="80" font-size="9" fill="#1B2A4A" font-family="monospace">       = ??? mm</text>
+            <text x="295" y="97" font-size="9" fill="#1B2A4A" font-family="monospace">d_fond = 7 × sin(?)°</text>
+            <text x="295" y="111" font-size="9" fill="#1B2A4A" font-family="monospace">       = ??? mm</text>
+          </svg>
+          <div class="fc">Figure 4 — Cote de fond P décomposée en h_fond et d_fond</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Questions — Vérification</div>
+
+        <div class="qb" id="qb5-1">
+          <div class="qh">
+            <span class="qc">Q5.1</span>
+            <span class="qt">Calculer h_fond = P × cos(α) = 7 × cos(α). Arrondir au centième.</span>
+            <span class="qp">3 pts</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>h_fond =</label>
+              <input type="number" class="ni" id="n5-1" step="0.01" placeholder="0.00" oninput="chk('5-1',6.432,0.09)">
+              <span class="un">mm</span>
+            </div>
+            <div class="fb" id="fb5-1"></div>
+          </div>
+        </div>
+
+        <div class="qb" id="qb5-2">
+          <div class="qh">
+            <span class="qc">Q5.2</span>
+            <span class="qt">Calculer d_fond = P × sin(α) = 7 × sin(α). Arrondir au centième.</span>
+            <span class="qp">3 pts</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>d_fond =</label>
+              <input type="number" class="ni" id="n5-2" step="0.01" placeholder="0.00" oninput="chk('5-2',2.757,0.09)">
+              <span class="un">mm</span>
+            </div>
+            <div class="fb" id="fb5-2"></div>
+          </div>
+        </div>
+
+        <div class="qb" id="qb5-3">
+          <div class="qh">
+            <span class="qc">Q5.3</span>
+            <span class="qt">h_fond est-il inférieur à h = 42 mm ? Entrer 1 pour OUI, 0 pour NON.</span>
+            <span class="qp">1 pt</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>h_fond &lt; 42 mm ?</label>
+              <input type="number" class="ni" id="n5-3" step="1" placeholder="0 ou 1" min="0" max="1" oninput="chk('5-3',1,0.5)">
+              <span class="un">(1=oui, 0=non)</span>
+            </div>
+            <div class="fb" id="fb5-3"></div>
+          </div>
+        </div>
+
+        <div class="qb" id="qb5-4">
+          <div class="qh">
+            <span class="qc">Q5.4</span>
+            <span class="qt">d_fond est-il inférieur à d = 18 mm ? Entrer 1 pour OUI, 0 pour NON.</span>
+            <span class="qp">1 pt</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>d_fond &lt; 18 mm ?</label>
+              <input type="number" class="ni" id="n5-4" step="1" placeholder="0 ou 1" min="0" max="1" oninput="chk('5-4',1,0.5)">
+              <span class="un">(1=oui, 0=non)</span>
+            </div>
+            <div class="fb" id="fb5-4"></div>
+          </div>
+        </div>
+
+        <div class="qb" id="qb5-5">
+          <div class="qh">
+            <span class="qc">Q5.5</span>
+            <span class="qt">La cote de fond est-elle cohérente — la goupille est-elle dans le bloc ? Entrer 1 pour OUI, 0 pour NON.</span>
+            <span class="qp">2 pts</span>
+          </div>
+          <div class="qbd">
+            <div class="ir">
+              <label>Cote cohérente ?</label>
+              <input type="number" class="ni" id="n5-5" step="1" placeholder="0 ou 1" min="0" max="1" oninput="chk('5-5',1,0.5)">
+              <span class="un">(1=oui, 0=non)</span>
+            </div>
+            <div class="fb" id="fb5-5"></div>
+          </div>
+        </div>
+
+        <button class="bv" onclick="valS(5)">Valider et générer la fiche de réglage</button>
+
+        <div class="fiche" id="fiche">
+          <h3>✓ Fiche de réglage machine — Prête pour l'atelier</h3>
+          <p class="tx" style="margin-bottom:9px">Tous les calculs sont validés. Exporter en PDF et faire viser par l'enseignant avant perçage.</p>
+          <div class="fg">
+            <div class="fi"><div class="fl">Angle d'inclinaison α</div><div class="fv" id="fi-a">—</div></div>
+            <div class="fi"><div class="fl">Foret à utiliser</div><div class="fv">∅ 6 mm</div></div>
+            <div class="fi"><div class="fl">Butée de profondeur</div><div class="fv" id="fi-l">—</div></div>
+            <div class="fi"><div class="fl">Pente de perçage</div><div class="fv" id="fi-p">—</div></div>
+            <div class="fi"><div class="fl">Composante verticale h_fond</div><div class="fv" id="fi-hf">—</div></div>
+            <div class="fi"><div class="fl">Composante horizontale d_fond</div><div class="fv" id="fi-df">—</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ── Valeurs exactes ──────────────────────────────────
+const V = {
+  alpha: Math.atan(18/42)*180/Math.PI,
+  L:     Math.sqrt(42*42+18*18),
+  tanA:  18/42,
+  pente: 18/42*100,
+  hf:    7*Math.cos(Math.atan(18/42)),
+  df:    7*Math.sin(Math.atan(18/42))
+};
+
+// ── État ─────────────────────────────────────────────
+const deb = new Set([1]);
+const sv  = {};  // valeurs saisies id → valeur
+
+// ── Navigation ───────────────────────────────────────
+function aller(n) {
+  if (!deb.has(n)) return;
+  document.querySelectorAll('.pnl').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+  document.getElementById('p'+n).classList.add('active');
+  document.getElementById('nav'+n).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function ouvrir(n) {
+  if (deb.has(n)) return;
+  deb.add(n);
+  const b = document.getElementById('nav'+n);
+  b.classList.remove('locked');
+  const lk = document.getElementById('lk'+n);
+  if (lk) lk.remove();
+}
+
+// ── Validation numérique ─────────────────────────────
+function chk(id, attendu, tol) {
+  const inp = document.getElementById('n'+id);
+  const fb  = document.getElementById('fb'+id);
+  if (!inp||!fb) return;
+  const v = parseFloat(inp.value);
+  if (inp.value===''||isNaN(v)) {
+    inp.classList.remove('ok','err');
+    fb.classList.remove('show','ok','err');
+    return;
+  }
+  const ok = Math.abs(v-attendu)<=tol;
+  inp.classList.toggle('ok',ok);
+  inp.classList.toggle('err',!ok);
+  fb.classList.add('show');
+  fb.classList.toggle('ok',ok);
+  fb.classList.toggle('err',!ok);
+  if (ok) { fb.innerHTML='✓ Correct !'; sv[id]=v; }
+  else { fb.innerHTML='✗ Incorrect — vérifier le calcul.'; }
+  // MAJ couleur qblock parent
+  const qb = document.getElementById('qb'+id);
+  if (qb) { qb.classList.toggle('ok',ok); qb.classList.toggle('err',!ok); }
+}
+
+function isOK(id) {
+  const inp = document.getElementById('n'+id);
+  return inp && inp.classList.contains('ok');
+}
+
+// ── Progression ──────────────────────────────────────
+function majProg(s, ids) {
+  const done = ids.filter(isOK).length;
+  const el = document.getElementById('prog'+s);
+  if (el) el.style.width = Math.round(done/ids.length*100)+'%';
+}
+
+// ── Alerte ───────────────────────────────────────────
+function alrt(msg) {
+  const old = document.getElementById('_alrt');
+  if (old) old.remove();
+  const d = document.createElement('div');
+  d.id='_alrt';
+  d.style.cssText='position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#B14030;color:#fff;padding:9px 18px;border-radius:8px;font-size:.83rem;z-index:999;max-width:400px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.2)';
+  d.textContent=msg;
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(),3500);
+}
+
+// ── Configs des séances ──────────────────────────────
+const CFG = {
+  1: { ids:['1-1','1-2','1-3','1-4'], suivante:2 },
+  2: { ids:['2-1','2-2'], suivante:3 },
+  3: { ids:['3-1','3-2','3-3','3-4'], suivante:4 },
+  4: { ids:['4-1','4-2','4-3'], suivante:5 },
+  5: { ids:['5-1','5-2','5-3','5-4','5-5'], suivante:null }
+};
+
+function valS(s) {
+  const cfg = CFG[s];
+  majProg(s, cfg.ids);
+  const echecs = cfg.ids.filter(id => !isOK(id));
+  if (echecs.length > 0) {
+    const first = echecs[0];
+    alrt('Q'+first.replace('-','.')+' — réponse incorrecte ou manquante.');
+    return;
+  }
+  // Succès
+  if (s < 5) {
+    document.getElementById('ok'+s).textContent = '✓ Validé';
+    document.getElementById('ul'+s).classList.add('show');
+    ouvrir(cfg.suivante);
+  } else {
+    terminer();
+  }
+}
+
+function terminer() {
+  const a  = sv['2-2'] ?? V.alpha.toFixed(2);
+  const l  = sv['3-2'] ?? V.L.toFixed(1);
+  const p  = sv['4-1'] ?? V.pente.toFixed(2);
+  const hf = sv['5-1'] ?? V.hf.toFixed(2);
+  const df = sv['5-2'] ?? V.df.toFixed(2);
+  document.getElementById('fi-a').textContent  = parseFloat(a).toFixed(2)+'°';
+  document.getElementById('fi-l').textContent  = parseFloat(l).toFixed(1)+' mm';
+  document.getElementById('fi-p').textContent  = parseFloat(p).toFixed(2)+' %';
+  document.getElementById('fi-hf').textContent = parseFloat(hf).toFixed(2)+' mm';
+  document.getElementById('fi-df').textContent = parseFloat(df).toFixed(2)+' mm';
+  document.getElementById('ok5').textContent = '✓ Complet';
+  const f = document.getElementById('fiche');
+  f.classList.add('show');
+  f.scrollIntoView({behavior:'smooth'});
+}
+
+// ── Export PDF ────────────────────────────────────────
+function lancerPDF() {
+  const nom   = document.getElementById('e-nom').value  || '______________________';
+  const cl    = document.getElementById('e-cl').value   || '______';
+  const date  = new Date().toLocaleDateString('fr-FR');
+
+  let ph = document.getElementById('_ph');
+  if (!ph) {
+    ph = document.createElement('div');
+    ph.id='_ph'; ph.className='pb ph';
+    document.body.prepend(ph);
+  }
+  ph.innerHTML='<h1>BMA Armurerie — Trigonométrie appliquée — Perçage incliné</h1>'
+    +'<div class="pm">Élève : <strong>'+nom+'</strong> &nbsp;|&nbsp; Classe : <strong>'+cl+'</strong> &nbsp;|&nbsp; Date : <strong>'+date+'</strong></div>';
+
+  const a  = document.getElementById('fi-a').textContent;
+  const l  = document.getElementById('fi-l').textContent;
+  const p  = document.getElementById('fi-p').textContent;
+  const hf = document.getElementById('fi-hf').textContent;
+  const df = document.getElementById('fi-df').textContent;
+
+  let pf = document.getElementById('_pf');
+  if (!pf) {
+    pf = document.createElement('div');
+    pf.id='_pf'; pf.className='pb pf2';
+    document.body.appendChild(pf);
+  }
+  pf.innerHTML='<h2>Fiche de réglage machine — À faire viser avant perçage</h2>'
+    +'<div class="pr"><strong>Angle d\'inclinaison α</strong><span>'+a+'</span></div>'
+    +'<div class="pr"><strong>Foret à utiliser</strong><span>∅ 6 mm</span></div>'
+    +'<div class="pr"><strong>Profondeur — butée machine</strong><span>'+l+'</span></div>'
+    +'<div class="pr"><strong>Pente de perçage</strong><span>'+p+'</span></div>'
+    +'<div class="pr"><strong>Composante verticale h_fond</strong><span>'+hf+'</span></div>'
+    +'<div class="pr"><strong>Composante horizontale d_fond</strong><span>'+df+'</span></div>'
+    +'<div class="sg"><div class="sb2"><div class="sl">Signature de l\'élève</div></div>'
+    +'<div class="sb2"><div class="sl">Visa enseignant — Autorisation de perçage</div></div></div>';
+
+  window.print();
+}
+</script>
+</body>
+</html>
